@@ -17,7 +17,7 @@ module.exports = function (grunt) {
 
     grunt.registerMultiTask('nginline', 'Takes the content of templateUrl and puts it into template', function () {
 
-        var templateUrlRegex = new RegExp("templateUrl:(?:\s*)(?:'|\")(.*?)(?:'|\"),", "g");
+        var templateUrlRegex = /templateUrl:\s*(?:'|")(.*?)(?:'|"),/g;
         var templatesFolder = this.files[0].templates;
 
         // Iterate over all specified file groups.
@@ -33,9 +33,13 @@ module.exports = function (grunt) {
                 }
             }).map(function (filepath) {
                 // Read file source.
+                grunt.log.writeln(filepath);
+
                 var code = grunt.file.read(filepath);
+
                 var results;
                 var i = 0;
+
                 while ((results = templateUrlRegex.exec(code)) !== null) {
                     i++;
 
