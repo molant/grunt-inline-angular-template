@@ -8,7 +8,8 @@
 
 'use strict';
 
-var path = require('path');
+var path = require('path'),
+    minify = require('html-minifier').minify;
 
 module.exports = function (grunt) {
 
@@ -33,8 +34,6 @@ module.exports = function (grunt) {
                 }
             }).map(function (filepath) {
                 // Read file source.
-                grunt.log.writeln(filepath);
-
                 var code = grunt.file.read(filepath);
 
                 var results;
@@ -47,6 +46,12 @@ module.exports = function (grunt) {
                     var fileName = split[split.length - 1];
                     var template = grunt.file.read(path.join(templatesFolder[0], fileName));
                     if(template){
+                        template = minify(template, {
+                            collapseWhitespace: true,
+                            collapseBooleanAttributes: true,
+                            removeCommentsFromCDATA: true,
+                            removeOptionalTags: true
+                        });
                         template = template.replace(/'/g, "\\'").replace(/\n/g, '').replace(/\r/g, '');
                     }
 
