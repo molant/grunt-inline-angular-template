@@ -15,7 +15,7 @@ module.exports = function (grunt) {
     // Please see the Grunt documentation for more information regarding task
     // creation: http://gruntjs.com/creating-tasks
 
-    grunt.registerMultiTask('inline_angular_templates', 'Takes the content of templateUrl and puts it into template', function () {
+    grunt.registerMultiTask('nginline', 'Takes the content of templateUrl and puts it into template', function () {
 
         // Merge task-specific and/or target-specific options with these defaults.
         var options = this.options({

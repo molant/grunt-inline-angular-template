@@ -32,7 +32,7 @@ module.exports = function (grunt) {
         },
 
         // Configuration to be run (and then tested).
-        inline_angular_templates: {
+        nginline: {
             dist: {
                 templates: ['tmp/templates/'],
                 src: ['tmp/directives/*.js']
