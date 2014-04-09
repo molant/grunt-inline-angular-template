@@ -17,16 +17,8 @@ module.exports = function (grunt) {
 
     grunt.registerMultiTask('nginline', 'Takes the content of templateUrl and puts it into template', function () {
 
-        // Merge task-specific and/or target-specific options with these defaults.
-        var options = this.options({
-            punctuation: '.',
-            separator: ', '
-        });
-
         var templateUrlRegex = new RegExp("templateUrl:(?:\s*)(?:'|\")(.*?)(?:'|\"),", "g");
         var templatesFolder = this.files[0].templates;
-
-        grunt.log.writeln(JSON.stringify(this.files, null, 2));
 
         // Iterate over all specified file groups.
         this.files.forEach(function (file) {
@@ -42,13 +34,10 @@ module.exports = function (grunt) {
             }).map(function (filepath) {
                 // Read file source.
                 var code = grunt.file.read(filepath);
-                var newFile = 'output.js';
                 var results;
                 var i = 0;
                 while ((results = templateUrlRegex.exec(code)) !== null) {
                     i++;
-                    grunt.log.writeln('Iteration ' + i);
-                    grunt.log.writeln(JSON.stringify(results, null, 2));
 
                     var split = results[1].split('/');
                     var fileName = split[split.length - 1];
@@ -58,19 +47,15 @@ module.exports = function (grunt) {
                     }
 
                     var tempCode =code.replace(results[0], 'template: \'' + template + '\',');
-
-                    grunt.log.writeln(tempCode);
-
                     code = tempCode;
-
-
                 }
 
-                grunt.file.write(newFile, code);
+                if(i > 0){
+                    grunt.file.write(filepath, code);
+                    grunt.log.writeln(i + ' templates replaced in ' + filepath);
+                }
 
-                grunt.log.writeln('File "' + newFile + '" created.');
-
-                return code;
+                return;
             });
         });
     });
