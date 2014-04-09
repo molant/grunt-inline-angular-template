@@ -23,7 +23,7 @@ module.exports = function (grunt) {
             separator: ', '
         });
 
-        var templateUrlRegex = new RegExp("templateUrl: (?:'|\")(.*)(?:'|\")");
+        var templateUrlRegex = new RegExp("templateUrl:(?:\s*)(?:'|\")(.*?)(?:'|\"),", "g");
         var templatesFolder = this.files[0].templates;
 
         grunt.log.writeln(JSON.stringify(this.files, null, 2));
@@ -42,20 +42,34 @@ module.exports = function (grunt) {
             }).map(function (filepath) {
                 // Read file source.
                 var code = grunt.file.read(filepath);
+                var newFile = 'output.js';
+                var results;
+                var i = 0;
+                while ((results = templateUrlRegex.exec(code)) !== null) {
+                    i++;
+                    grunt.log.writeln('Iteration ' + i);
+                    grunt.log.writeln(JSON.stringify(results, null, 2));
 
-                var results = templateUrlRegex.exec(code);
-
-                if (results) {
                     var split = results[1].split('/');
-                    var fileName =  split[split.length - 1];
+                    var fileName = split[split.length - 1];
                     var template = grunt.file.read(path.join(templatesFolder[0], fileName));
-                    code = code.replace(results[0], 'template: \'' + template.replace(/'/g,"\\'").replace(/\n/g,'').replace(/\r/g,'') + '\'');
-                    var newFile = 'output.js';
+                    if(template){
+                        template = template.replace(/'/g, "\\'").replace(/\n/g, '').replace(/\r/g, '');
+                    }
 
-                    grunt.file.write(newFile, code);
+                    var tempCode =code.replace(results[0], 'template: \'' + template + '\',');
 
-                    grunt.log.writeln('File "' + newFile + '" created.');
+                    grunt.log.writeln(tempCode);
+
+                    code = tempCode;
+
+
                 }
+
+                grunt.file.write(newFile, code);
+
+                grunt.log.writeln('File "' + newFile + '" created.');
+
                 return code;
             });
         });
